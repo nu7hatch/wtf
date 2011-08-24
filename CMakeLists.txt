@@ -195,16 +195,25 @@ elseif (WIN32)
   list(APPEND WTF_SOURCES wtf/OSAllocatorWin.cpp)
 endif ()
 
+if (APPLE)
+  list(APPEND WTF_SOURCES wtf/mac/MainThreadMac.mm)
+endif ()
+
 option(SINGLE_THREADED "Enable single threaded mode" OFF)
 
 if (SINGLE_THREADED)
   set(ENABLE_SINGLE_THREADED 1)
 else ()
   find_package(Threads REQUIRED)
-  list(APPEND WTF_SOURCES wtf/ThreadingPthreads.cpp)
+  list(APPEND WTF_SOURCES
+    wtf/ThreadingPthreads.cpp
+    wtf/ThreadIdentifierDataPthreads.cpp 
+    )
   list(APPEND WTF_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
   set(HAVE_PTHREADS 1)
 endif ()
+
+find_package(ICU REQUIRED)
 
 configure_file(cmakeconfig.h.cmake ${CMAKE_SOURCE_DIR}/cmakeconfig.h)
 add_library(${WTF_LIBRARY_NAME} ${ICU_SOURCES} ${WTF_SOURCES})
