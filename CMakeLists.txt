@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(WTF)
+set(WTF_LIBRARY_NAME wtf)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(WTF_DIR "${CMAKE_SOURCE_DIR}/wtf")
-set(ICU_DIR "${CMAKE_SOURCE_DIR}/icu")
-set(WTF_LIBRARY_NAME wtf)
 
 list(APPEND WTF_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}
   ${WTF_DIR}/text
   ${WTF_DIR}/unicode
-  ${ICU_DIR}
+  ${WTF_DIR}/icu
   )
 
 list(APPEND WTF_SOURCES
