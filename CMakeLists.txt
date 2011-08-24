@@ -4,7 +4,7 @@ set(WTF_LIBRARY_NAME wtf)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(WTF_DIR "${CMAKE_SOURCE_DIR}/wtf")
-
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/")
 list(APPEND WTF_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}
   ${WTF_DIR}/text
@@ -20,6 +20,7 @@ list(APPEND WTF_SOURCES
   wtf/DateMath.cpp
   wtf/dtoa.cpp
   wtf/DecimalNumber.cpp
+  wtf/DynamicAnnotations.cpp
   wtf/FastMalloc.cpp
   wtf/HashTable.cpp
   wtf/MD5.cpp
@@ -34,7 +35,6 @@ list(APPEND WTF_SOURCES
   wtf/SHA1.cpp
   wtf/StackBounds.cpp
   wtf/TCSystemAlloc.cpp
-  wtf/ThreadingNone.cpp
   wtf/Threading.cpp
   wtf/TypeTraits.cpp
   wtf/WTFThreadData.cpp
@@ -44,8 +44,6 @@ list(APPEND WTF_SOURCES
   wtf/text/StringImpl.cpp
   wtf/text/StringStatics.cpp
   wtf/text/WTFString.cpp
-  wtf/unicode/CollatorDefault.cpp
-  wtf/unicode/icu/CollatorICU.cpp
   wtf/unicode/UTF8.cpp
   )
 
@@ -59,12 +57,8 @@ list(APPEND WTF_HEADERS
   wtf/Bitmap.h
   wtf/BlockStack.h
   wtf/BloomFilter.h
-  wtf/brew/RefPtrBrew.h
-  wtf/brew/ShellBrew.h
-  wtf/brew/SystemMallocBrew.h
   wtf/BumpPointerAllocator.h
   wtf/ByteArray.h
-  wtf/chromium/ChromiumThreading.h
   wtf/Compiler.h
   wtf/Complex.h
   wtf/CrossThreadRefCounted.h
@@ -147,17 +141,12 @@ list(APPEND WTF_HEADERS
   wtf/TCSpinLock.h
   wtf/TCSystemAlloc.h
   wtf/text/AtomicString.h
-  wtf/text/AtomicStringHash.h
   wtf/text/AtomicStringImpl.h
   wtf/text/CString.h
   wtf/text/StringBuffer.h
-  wtf/text/StringBuilder.h
-  wtf/text/StringConcatenate.h
   wtf/text/StringHash.h
   wtf/text/StringImpl.h
   wtf/text/StringImplBase.h
-  wtf/text/StringOperators.h
-  wtf/text/TextPosition.h
   wtf/text/WTFString.h
   wtf/ThreadFunctionInvocation.h
   wtf/ThreadIdentifierDataPthreads.h
@@ -167,31 +156,35 @@ list(APPEND WTF_HEADERS
   wtf/ThreadSafeRefCounted.h
   wtf/ThreadSpecific.h
   wtf/TypeTraits.h
-  wtf/unicode/brew/UnicodeBrew.h
   wtf/unicode/CharacterNames.h
   wtf/unicode/Collator.h
-  wtf/unicode/glib/UnicodeGLib.h
-  wtf/unicode/icu/UnicodeIcu.h
-  wtf/unicode/qt4/UnicodeQt4.h
-  wtf/unicode/ScriptCodesFromICU.h
   wtf/unicode/Unicode.h
-  wtf/unicode/UnicodeMacrosFromICU.h
   wtf/unicode/UTF8.h
-  wtf/unicode/wince/UnicodeWinCE.h
   wtf/UnusedParam.h
   wtf/ValueCheck.h
   wtf/Vector.h
   wtf/VectorTraits.h
   wtf/VMTags.h
-  wtf/wince/FastMallocWinCE.h
-  wtf/wince/MemoryManager.h
   wtf/WTFThreadData.h
   )
 
 if (UNIX)
   list(APPEND WTF_SOURCES wtf/OSAllocatorPosix.cpp)
 elseif (WIN32)
-  list(APPEND WTF_SOURCES wtf/OSAllocatorWin.cpp)
+  list(APPEND WTF_SOURCES
+    wtf/NullPtr.cpp
+    wtf/OSAllocatorWin.cpp
+    wtf/TCSystemAlloc.cpp
+    wtf/ThreadingWin.cpp
+    wtf/ThreadSpecificWin.cpp
+    wtf/unicode/CollatorDefault.cpp
+    wtf/unicode/wince/UnicodeWinCE.cpp
+    wtf/win/MainThreadWin.cpp
+    wtf/win/OwnPtrWin.cpp
+    )
+
+  list(APPEND WTF_HEADERS unicode/wince/UnicodeWinCE.h)
+  list(APPEND WTF_LIBRARIES mmtimer)
 endif ()
 
 if (APPLE)
@@ -202,6 +195,7 @@ option(SINGLE_THREADED "Enable single threaded mode" OFF)
 
 if (SINGLE_THREADED)
   set(ENABLE_SINGLE_THREADED 1)
+  list(APPEND WTF_SOURCES wtf/ThreadingNone.cpp)
 else ()
   find_package(Threads REQUIRED)
   list(APPEND WTF_SOURCES
@@ -215,14 +209,10 @@ endif ()
 find_package(ICU REQUIRED)
 
 configure_file(cmakeconfig.h.cmake ${CMAKE_SOURCE_DIR}/cmakeconfig.h)
+add_definitions(-DBUILDING_WTF)
 add_library(${WTF_LIBRARY_NAME} ${ICU_SOURCES} ${WTF_SOURCES})
 include_directories(${WTF_LIBRARY_NAME} ${WTF_INCLUDE_DIRS})
 target_link_libraries(${WTF_LIBRARY_NAME} ${WTF_LIBRARIES})
 
-install(FILES ${WTF_HEADERS}
-  DESTINATION include/wtf
-  )
-install(TARGETS ${WTF_LIBRARY_NAME}
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  )
+install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
+install(TARGETS ${WTF_LIBRARY_NAME} DESTINATION lib)
