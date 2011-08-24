@@ -206,7 +206,7 @@ else ()
   set(HAVE_PTHREADS 1)
 endif ()
 
-configure_file(config.h.cmake ${CMAKE_SOURCE_DIR}/cmakeconfig.h)
+configure_file(cmakeconfig.h.cmake ${CMAKE_SOURCE_DIR}/cmakeconfig.h)
 add_library(${WTF_LIBRARY_NAME} ${ICU_SOURCES} ${WTF_SOURCES})
 include_directories(${WTF_LIBRARY_NAME} ${WTF_INCLUDE_DIRS})
 target_link_libraries(${WTF_LIBRARY_NAME} ${WTF_LIBRARIES})
