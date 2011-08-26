@@ -28,7 +28,7 @@
 
 #include "PassRefPtr.h"
 #include "RefCounted.h"
-#include "Vector.h"
+#include "wtf/Vector.h"
 
 namespace WTF {
 

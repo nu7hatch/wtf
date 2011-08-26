@@ -140,14 +140,6 @@ list(APPEND WTF_HEADERS
   wtf/TCPageMap.h
   wtf/TCSpinLock.h
   wtf/TCSystemAlloc.h
-  wtf/text/AtomicString.h
-  wtf/text/AtomicStringImpl.h
-  wtf/text/CString.h
-  wtf/text/StringBuffer.h
-  wtf/text/StringHash.h
-  wtf/text/StringImpl.h
-  wtf/text/StringImplBase.h
-  wtf/text/WTFString.h
   wtf/ThreadFunctionInvocation.h
   wtf/ThreadIdentifierDataPthreads.h
   wtf/Threading.h
@@ -156,16 +148,35 @@ list(APPEND WTF_HEADERS
   wtf/ThreadSafeRefCounted.h
   wtf/ThreadSpecific.h
   wtf/TypeTraits.h
-  wtf/unicode/CharacterNames.h
-  wtf/unicode/Collator.h
-  wtf/unicode/Unicode.h
-  wtf/unicode/UTF8.h
   wtf/UnusedParam.h
   wtf/ValueCheck.h
   wtf/Vector.h
   wtf/VectorTraits.h
   wtf/VMTags.h
   wtf/WTFThreadData.h
+  )
+
+list(APPEND WTF_TEXT_HEADERS
+  wtf/text/AtomicString.h
+  wtf/text/AtomicStringHash.h
+  wtf/text/AtomicStringImpl.h
+  wtf/text/CString.h
+  wtf/text/StringBuffer.h
+  wtf/text/StringHash.h
+  wtf/text/StringImpl.h
+  wtf/text/StringImplBase.h
+  wtf/text/WTFString.h
+  )
+
+list(APPEND WTF_UNICODE_HEADERS
+  wtf/unicode/CharacterNames.h
+  wtf/unicode/Collator.h
+  wtf/unicode/Unicode.h
+  wtf/unicode/UTF8.h
+  )
+
+list(APPEND WTF_UNICODE_ICU_HEADERS
+  wtf/unicode/icu/UnicodeIcu.h
   )
 
 if (UNIX)
@@ -215,4 +226,7 @@ include_directories(${WTF_LIBRARY_NAME} ${WTF_INCLUDE_DIRS})
 target_link_libraries(${WTF_LIBRARY_NAME} ${WTF_LIBRARIES})
 
 install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
+install(FILES ${WTF_TEXT_HEADERS} DESTINATION include/wtf/text)
+install(FILES ${WTF_UNICODE_HEADERS} DESTINATION include/wtf/unicode)
+install(FILES ${WTF_UNICODE_ICU_HEADERS} DESTINATION include/wtf/unicode/icu)
 install(TARGETS ${WTF_LIBRARY_NAME} DESTINATION lib)
