@@ -54,6 +54,14 @@
 #define HAVE_PTHREAD_NP_H 1
 #endif
 
+#if OS(UNIX)
+
+#ifdef HAVE_PTHREADS
+#define WTF_USE_PTHREADS 1
+#endif
+
+#endif
+
 /* FIXME: if all platforms have these, do they really need #defines? */
 #define HAVE_STDINT_H 1
 
